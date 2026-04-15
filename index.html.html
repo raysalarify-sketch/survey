@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>worked. 서비스 이용 만족도 설문조사</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Pretendard',-apple-system,'Malgun Gothic',sans-serif; background:#f5f5f3; -webkit-font-smoothing:antialiased; }
+@keyframes popIn { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.15)} 100%{transform:scale(1);opacity:1} }
+@keyframes fadeUp { 0%{opacity:0;transform:translateY(16px)} 100%{opacity:1;transform:translateY(0)} }
+textarea:focus, input:focus { outline:none; }
+::-webkit-scrollbar { width:4px; height:4px; }
+::-webkit-scrollbar-thumb { background:#ccc; border-radius:4px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const LOGO_SRC = 'data:image/png;base64,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';
+
+// ─── CONFIG ───
+const API_URL = null; // 서버 API 연동 시 URL 입력 (예: "/api/survey")
+const ADMIN_PIN = "9999";
+
+const SERVICES = [
+  { id:"loan", name:"사내대출", icon:"🏦", desc:"주거자금·생활자금 대출 서비스" },
+  { id:"welfare", name:"복지빌더", icon:"🎁", desc:"선택적 복지 포인트 운영" },
+  { id:"cert", name:"재직증명서", icon:"📄", desc:"재직·경력증명서 발급" },
+  { id:"noti", name:"알림톡 단체발송", icon:"💬", desc:"카카오 알림톡 일괄 발송" },
+  { id:"custom", name:"커스텀솔루션", icon:"⚙️", desc:"기업 맞춤형 솔루션" },
+];
+
+const SERVICE_QUESTIONS = {
+  loan: [
+    { id:"loan_apply", label:"대출 신청 화면의 접근성과 절차가 편리했나요?", type:"rating" },
+    { id:"loan_doc", label:"서류 제출 및 보완 요청 과정은 원활했나요?", type:"rating" },
+    { id:"loan_sign", label:"전자서명 및 계약서 작성 경험은 어떠셨나요?", type:"rating" },
+    { id:"loan_status", label:"대출 진행 상태(접수→심사→실행) 확인이 용이했나요?", type:"rating" },
+    { id:"loan_repay", label:"상환 스케줄 조회 및 연장 신청 과정은 편리했나요?", type:"rating" },
+    { id:"loan_comment", label:"사내대출 이용 중 불편했던 점이나 개선이 필요한 부분을 알려주세요.", type:"text" },
+    { id:"loan_feature", label:"사내대출에서 새로 추가되거나 개선되었으면 하는 기능이 있다면 캡쳐와 함께 설명해 주세요.", type:"textarea_with_image" },
+  ],
+  welfare: [
+    { id:"wf_browse", label:"복지 항목 조회 및 카테고리 탐색이 편리했나요?", type:"rating" },
+    { id:"wf_point", label:"복지 포인트 잔여 확인 및 사용 과정이 직관적이었나요?", type:"rating" },
+    { id:"wf_apply", label:"복지 항목 신청 절차가 간편했나요?", type:"rating" },
+    { id:"wf_history", label:"사용 내역 및 정산 확인이 용이했나요?", type:"rating" },
+    { id:"wf_comment", label:"복지빌더 이용 중 불편했던 점이나 개선이 필요한 부분을 알려주세요.", type:"text" },
+    { id:"wf_feature", label:"복지빌더에서 새로 추가되거나 개선되었으면 하는 기능이 있다면 캡쳐와 함께 설명해 주세요.", type:"textarea_with_image" },
+  ],
+  cert: [
+    { id:"cert_apply", label:"재직증명서 발급 신청 과정이 간편했나요?", type:"rating" },
+    { id:"cert_speed", label:"발급 완료까지 소요 시간은 적절했나요?", type:"rating" },
+    { id:"cert_format", label:"증명서 양식 및 출력 품질에 만족하셨나요?", type:"rating" },
+    { id:"cert_type", label:"필요한 증명서 종류(재직, 경력, 급여 등)가 충분히 제공되었나요?", type:"rating" },
+    { id:"cert_comment", label:"재직증명서 발급 관련 불편했던 점이나 개선이 필요한 부분을 알려주세요.", type:"text" },
+    { id:"cert_feature", label:"재직증명서 서비스에서 추가되거나 개선되었으면 하는 기능이 있다면 캡쳐와 함께 설명해 주세요.", type:"textarea_with_image" },
+  ],
+  noti: [
+    { id:"noti_setup", label:"알림톡 발송 대상 설정 및 메시지 작성이 편리했나요?", type:"rating" },
+    { id:"noti_template", label:"발송 템플릿 관리(등록·수정·삭제)가 용이했나요?", type:"rating" },
+    { id:"noti_result", label:"발송 결과(성공·실패) 확인 및 재발송 처리가 편리했나요?", type:"rating" },
+    { id:"noti_schedule", label:"예약 발송 및 반복 발송 설정이 직관적이었나요?", type:"rating" },
+    { id:"noti_comment", label:"알림톡 단체발송 이용 중 불편했던 점이나 개선이 필요한 부분을 알려주세요.", type:"text" },
+    { id:"noti_feature", label:"알림톡 단체발송에서 추가되거나 개선되었으면 하는 기능이 있다면 캡쳐와 함께 설명해 주세요.", type:"textarea_with_image" },
+  ],
+  custom: [
+    { id:"cust_fit", label:"커스텀솔루션이 업무 요구사항에 적합하게 구현되었나요?", type:"rating" },
+    { id:"cust_ui", label:"솔루션 화면 구성 및 사용성이 편리했나요?", type:"rating" },
+    { id:"cust_support", label:"요청사항 반영 및 운영 지원 대응 속도에 만족하셨나요?", type:"rating" },
+    { id:"cust_comment", label:"커스텀솔루션 이용 중 불편했던 점이나 개선이 필요한 부분을 알려주세요.", type:"text" },
+    { id:"cust_feature", label:"커스텀솔루션에서 추가되거나 개선되었으면 하는 기능이 있다면 캡쳐와 함께 설명해 주세요.", type:"textarea_with_image" },
+  ],
+};
+
+const OVERALL_QUESTIONS = [
+  { id:"ov_satisfaction", label:"worked. 서비스 전반에 대한 종합 만족도를 선택해 주세요.", type:"rating" },
+  { id:"ov_recommend", label:"worked. 서비스를 동료에게 추천할 의향이 있으신가요?", type:"rating" },
+  { id:"ov_comment", label:"그 외 전체 서비스에 대해 건의하고 싶은 사항을 자유롭게 작성해 주세요.", type:"textarea_with_image" },
+];
+
+const ratingLabels = ["매우 불만족","불만족","보통","만족","매우 만족"];
+
+// ─── STORAGE (localStorage for standalone) ───
+const STORAGE_KEY = "worked-survey-v2";
+const storage = {
+  async get() { try { const d = localStorage.getItem(STORAGE_KEY); return d ? JSON.parse(d) : []; } catch { return []; } },
+  async save(data) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); return true; } catch { return false; } },
+  async add(entry) { const d = await this.get(); d.push(entry); return this.save(d); },
+  async post(entry) {
+    // 서버 API가 설정된 경우 서버로 전송
+    if (API_URL) {
+      try { await fetch(API_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(entry) }); } catch(e) { console.error("API 전송 실패:",e); }
+    }
+    return this.add(entry);
+  }
+};
+
+// ─── COMPONENTS ───
+const Logo = ({width=120}) => <img src={LOGO_SRC} alt="worked." style={{width,height:"auto",display:"block"}} />;
+
+function ImageUploadZone({images=[],onChange}) {
+  const fileRef = React.useRef(null);
+  const [dragOver, setDragOver] = React.useState(false);
+  const addFiles = React.useCallback((files) => {
+    Array.from(files).forEach(file => {
+      if(!file.type.startsWith("image/")||images.length>=3) return;
+      const r = new FileReader();
+      r.onload = e => onChange(prev => [...(prev||[]),e.target.result].slice(0,3));
+      r.readAsDataURL(file);
+    });
+  },[images,onChange]);
+  const handlePaste = React.useCallback(e => {
+    const items = e.clipboardData?.items;
+    if(!items) return;
+    for(const item of items) { if(item.type.startsWith("image/")){e.preventDefault();addFiles([item.getAsFile()]);break;} }
+  },[addFiles]);
+
+  return React.createElement("div", null,
+    React.createElement("div", {onPaste:handlePaste,onDragOver:e=>{e.preventDefault();setDragOver(true)},onDragLeave:()=>setDragOver(false),onDrop:e=>{e.preventDefault();setDragOver(false);addFiles(e.dataTransfer.files)},onClick:()=>fileRef.current?.click(),tabIndex:0,
+      style:{border:`2px dashed ${dragOver?"#1a1a1a":"#d1d5db"}`,borderRadius:12,padding:"18px 16px",textAlign:"center",cursor:"pointer",background:dragOver?"#f5f5f5":"#fafafa",transition:"all 0.2s",outline:"none"}},
+      React.createElement("input",{ref:fileRef,type:"file",accept:"image/*",multiple:true,style:{display:"none"},onChange:e=>addFiles(e.target.files)}),
+      React.createElement("div",{style:{fontSize:24,marginBottom:4}},"📎"),
+      React.createElement("p",{style:{margin:0,fontSize:12,color:"#64748b",lineHeight:1.6}},
+        "클릭 · 드래그 · ",React.createElement("strong",{style:{color:"#1a1a1a"}},"Ctrl+V")," 붙여넣기"),
+      React.createElement("p",{style:{margin:"2px 0 0",fontSize:10,color:"#94a3b8"}},"최대 3장")
+    ),
+    images.length>0 && React.createElement("div",{style:{display:"flex",gap:8,marginTop:10,flexWrap:"wrap"}},
+      images.map((src,idx) => React.createElement("div",{key:idx,style:{position:"relative",width:88,height:88,borderRadius:8,overflow:"hidden",border:"1px solid #e2e8f0"}},
+        React.createElement("img",{src,style:{width:"100%",height:"100%",objectFit:"cover"}}),
+        React.createElement("button",{type:"button",onClick:e=>{e.stopPropagation();onChange(p=>p.filter((_,i)=>i!==idx))},
+          style:{position:"absolute",top:3,right:3,width:20,height:20,borderRadius:"50%",border:"none",background:"rgba(0,0,0,0.55)",color:"#fff",fontSize:12,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}},"×")
+      ))
+    )
+  );
+}
+
+function StarRating({value,onChange}) {
+  const [hover,setHover] = React.useState(0);
+  return React.createElement("div",{style:{display:"flex",gap:5,alignItems:"center"}},
+    [1,2,3,4,5].map(s => React.createElement("button",{key:s,type:"button",onClick:()=>onChange(s),onMouseEnter:()=>setHover(s),onMouseLeave:()=>setHover(0),
+      style:{background:"none",border:"none",cursor:"pointer",padding:2,transition:"transform 0.15s",transform:(hover||value)>=s?"scale(1.15)":"scale(1)"}},
+      React.createElement("svg",{width:30,height:30,viewBox:"0 0 24 24",fill:"none"},
+        React.createElement("path",{d:"M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z",
+          fill:(hover||value)>=s?"#1a1a1a":"#e2e8f0",stroke:(hover||value)>=s?"#1a1a1a":"#cbd5e1",strokeWidth:1.5,strokeLinejoin:"round"}))
+    )),
+    React.createElement("span",{style:{marginLeft:8,fontSize:13,color:value?"#1a1a1a":"#94a3b8",fontWeight:500}},value?ratingLabels[value-1]:"선택해 주세요")
+  );
+}
+
+function ProgressBar({current,total}) {
+  const pct = total?Math.round((current/total)*100):0;
+  return React.createElement("div",{style:{marginBottom:28}},
+    React.createElement("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:6,fontSize:12,color:"#999"}},
+      React.createElement("span",null,"진행률"),React.createElement("span",{style:{fontWeight:600,color:"#1a1a1a"}},pct+"%")),
+    React.createElement("div",{style:{height:5,borderRadius:3,background:"#e8e8e8",overflow:"hidden"}},
+      React.createElement("div",{style:{width:pct+"%",height:"100%",borderRadius:3,background:"#1a1a1a",transition:"width 0.5s cubic-bezier(.4,0,.2,1)"}}))
+  );
+}
+
+function QuestionBlock({q,answers,setAnswer}) {
+  const label = React.createElement("label",{style:{display:"block",fontSize:14,fontWeight:600,color:"#1a1a1a",marginBottom:12,lineHeight:1.6}},
+    q.type==="rating" && React.createElement("span",{style:{display:"inline-block",background:"#f4f4f4",color:"#1a1a1a",fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:5,marginRight:8,verticalAlign:"middle"}},"필수"),
+    q.type==="textarea_with_image" && React.createElement("span",{style:{display:"inline-block",background:"#f0fdf4",color:"#16a34a",fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:5,marginRight:8,verticalAlign:"middle"}},"캡쳐 첨부"),
+    q.label
+  );
+  let input;
+  if(q.type==="rating") input = React.createElement(StarRating,{value:answers[q.id]||0,onChange:v=>setAnswer(q.id,v)});
+  else if(q.type==="textarea_with_image") input = React.createElement("div",{style:{display:"flex",flexDirection:"column",gap:10}},
+    React.createElement("textarea",{value:answers[q.id]||"",onChange:e=>setAnswer(q.id,e.target.value),placeholder:"개선이 필요한 기능이나 화면을 설명해 주세요 (선택)",rows:3,
+      style:{width:"100%",padding:"12px 14px",border:"1.5px solid #e2e8f0",borderRadius:10,fontSize:14,fontFamily:"inherit",lineHeight:1.6,resize:"vertical",background:"#fafafa",color:"#1a1a1a",boxSizing:"border-box"}}),
+    React.createElement(ImageUploadZone,{images:answers[q.id+"_images"]||[],onChange:u=>setAnswer(q.id+"_images",typeof u==="function"?u(answers[q.id+"_images"]||[]):u)})
+  );
+  else input = React.createElement("textarea",{value:answers[q.id]||"",onChange:e=>setAnswer(q.id,e.target.value),placeholder:"자유롭게 작성해 주세요 (선택)",rows:3,
+    style:{width:"100%",padding:"12px 14px",border:"1.5px solid #e2e8f0",borderRadius:10,fontSize:14,fontFamily:"inherit",lineHeight:1.6,resize:"vertical",background:"#fafafa",color:"#1a1a1a",boxSizing:"border-box"}});
+
+  return React.createElement("div",{style:{marginBottom:28,paddingBottom:28,borderBottom:"1px solid #f1f1f1"}},label,input);
+}
+
+// ─── RESULTS DASHBOARD ───
+function ResultsDashboard({responses,onBack}) {
+  const [expandedImg,setExpandedImg] = React.useState(null);
+  const [filterCompany,setFilterCompany] = React.useState("전체");
+  const [filterService,setFilterService] = React.useState("전체");
+  const companies = ["전체",...new Set(responses.map(r=>r._company).filter(Boolean))];
+  const filtered = responses.filter(r => { if(filterCompany!=="전체"&&r._company!==filterCompany) return false; if(filterService!=="전체"&&!r._services?.includes(filterService)) return false; return true; });
+  const allQs = []; SERVICES.forEach(s=>{if(SERVICE_QUESTIONS[s.id]) SERVICE_QUESTIONS[s.id].forEach(q=>allQs.push({...q,service:s.name,serviceId:s.id}));}); OVERALL_QUESTIONS.forEach(q=>allQs.push({...q,service:"종합",serviceId:"overall"}));
+  const ratingQs = allQs.filter(q=>q.type==="rating"); const featureQs = allQs.filter(q=>q.type==="textarea_with_image");
+  const avgFor = id => { const v=filtered.map(r=>r[id]).filter(x=>x>0); return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):"-"; };
+  const overallAvg = () => { let s=0,c=0; ratingQs.forEach(q=>{filtered.forEach(r=>{if(r[q.id]>0){s+=r[q.id];c++;}});}); return c?(s/c).toFixed(1):"-"; };
+  const imgCount = filtered.reduce((a,r)=>{featureQs.forEach(q=>{if(r[q.id+"_images"]?.length) a+=r[q.id+"_images"].length;});return a;},0);
+  const visRQ = filterService==="전체"?ratingQs:ratingQs.filter(q=>q.serviceId===filterService||q.serviceId==="overall");
+  const visFQ = filterService==="전체"?featureQs:featureQs.filter(q=>q.serviceId===filterService||q.serviceId==="overall");
+
+  // CSV 다운로드
+  const downloadCSV = () => {
+    const headers = ["회사명","서비스","제출일시",...allQs.map(q=>q.label.slice(0,30))];
+    const rows = filtered.map(r => [r._company, (r._services||[]).join("/"), r.submittedAt, ...allQs.map(q=>r[q.id]||"")]);
+    const csv = [headers,...rows].map(r=>r.map(c=>'"'+(c+"").replace(/"/g,'""')+'"').join(",")).join("\n");
+    const blob = new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
+    const a = document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="worked_survey_results.csv"; a.click();
+  };
+
+  return React.createElement("div",{style:{minHeight:"100vh",background:"#f5f5f3",padding:"40px 16px 80px"}},
+    expandedImg && React.createElement("div",{onClick:()=>setExpandedImg(null),style:{position:"fixed",inset:0,background:"rgba(0,0,0,0.75)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",cursor:"zoom-out",padding:24}},
+      React.createElement("img",{src:expandedImg,style:{maxWidth:"90vw",maxHeight:"85vh",borderRadius:12}})),
+    React.createElement("div",{style:{maxWidth:860,margin:"0 auto"}},
+      // Header
+      React.createElement("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:28}},
+        React.createElement("div",null,React.createElement("div",{style:{marginBottom:10}},React.createElement(Logo,{width:100})),React.createElement("h1",{style:{margin:0,fontSize:22,fontWeight:800,color:"#1a1a1a"}},"설문 결과 대시보드")),
+        React.createElement("div",{style:{display:"flex",gap:8}},
+          React.createElement("button",{type:"button",onClick:downloadCSV,style:{padding:"10px 16px",borderRadius:10,border:"1.5px solid #e2e8f0",background:"#fff",color:"#475569",fontWeight:600,fontSize:12,cursor:"pointer",fontFamily:"inherit"}},"📥 CSV"),
+          React.createElement("button",{type:"button",onClick:onBack,style:{padding:"10px 20px",borderRadius:10,border:"1.5px solid #e2e8f0",background:"#fff",color:"#475569",fontWeight:600,fontSize:13,cursor:"pointer",fontFamily:"inherit"}},"← 설문으로"))
+      ),
+      // Filters
+      React.createElement("div",{style:{background:"#fff",borderRadius:16,padding:"20px 24px",marginBottom:20,boxShadow:"0 2px 8px rgba(0,0,0,0.03)"}},
+        React.createElement("div",{style:{display:"flex",gap:24,flexWrap:"wrap",alignItems:"center"}},
+          React.createElement("div",null,
+            React.createElement("div",{style:{fontSize:11,fontWeight:600,color:"#999",marginBottom:6}},"회사"),
+            React.createElement("select",{value:filterCompany,onChange:e=>setFilterCompany(e.target.value),style:{padding:"8px 12px",borderRadius:8,border:"1px solid #e2e8f0",fontSize:13,fontFamily:"inherit",background:"#fafafa",color:"#1a1a1a",minWidth:140}},
+              companies.map(c=>React.createElement("option",{key:c,value:c},c)))),
+          React.createElement("div",null,
+            React.createElement("div",{style:{fontSize:11,fontWeight:600,color:"#999",marginBottom:6}},"서비스"),
+            React.createElement("div",{style:{display:"flex",gap:6,flexWrap:"wrap"}},
+              ["전체",...SERVICES.map(s=>s.id)].map(sid=>{
+                const svc=SERVICES.find(s=>s.id===sid);
+                return React.createElement("button",{key:sid,type:"button",onClick:()=>setFilterService(sid),style:{padding:"6px 14px",borderRadius:16,border:"none",fontSize:12,fontWeight:600,fontFamily:"inherit",cursor:"pointer",background:filterService===sid?"#1a1a1a":"#f0f0f0",color:filterService===sid?"#fff":"#666",transition:"all 0.15s"}},
+                  sid==="전체"?"전체":svc?.name);})))
+      )),
+      // Summary
+      React.createElement("div",{style:{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14,marginBottom:24}},
+        [{l:"응답 수",v:filtered.length},{l:"종합 평균",v:overallAvg(),s:"/5"},{l:"회사 수",v:new Set(filtered.map(r=>r._company)).size},{l:"첨부 이미지",v:imgCount}].map((c,i)=>
+          React.createElement("div",{key:i,style:{background:"#fff",borderRadius:14,padding:"20px 16px",boxShadow:"0 2px 8px rgba(0,0,0,0.03)",textAlign:"center"}},
+            React.createElement("div",{style:{fontSize:10,fontWeight:600,color:"#999",marginBottom:6,textTransform:"uppercase",letterSpacing:0.5}},c.l),
+            React.createElement("div",{style:{fontSize:28,fontWeight:800,color:"#1a1a1a"}},c.v,c.s&&React.createElement("span",{style:{fontSize:13,color:"#bbb"}},c.s))))),
+      // Ratings
+      React.createElement("div",{style:{background:"#fff",borderRadius:18,padding:28,boxShadow:"0 2px 8px rgba(0,0,0,0.03)",marginBottom:24}},
+        React.createElement("h2",{style:{margin:"0 0 20px",fontSize:16,fontWeight:700,color:"#1a1a1a"}},"항목별 만족도"),
+        visRQ.map(q=>{const avg=avgFor(q.id);const dist=[0,0,0,0,0];filtered.forEach(r=>{if(r[q.id]>0)dist[r[q.id]-1]++});const mx=Math.max(...dist,1);
+          return React.createElement("div",{key:q.id,style:{paddingBottom:16,marginBottom:16,borderBottom:"1px solid #f5f5f5"}},
+            React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}},
+              React.createElement("span",{style:{fontSize:12,fontWeight:600,color:"#333",flex:1,lineHeight:1.5}},
+                React.createElement("span",{style:{display:"inline-block",background:"#f4f4f4",fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:5,marginRight:6,color:"#1a1a1a"}},q.service),
+                q.label.length>40?q.label.slice(0,40)+"…":q.label),
+              React.createElement("span",{style:{fontSize:18,fontWeight:800,color:avg!=="-"&&Number(avg)>=4?"#1a1a1a":avg!=="-"&&Number(avg)>=3?"#f59e0b":"#ef4444",marginLeft:10,minWidth:32,textAlign:"right"}},avg)),
+            React.createElement("div",{style:{display:"flex",gap:3,alignItems:"end",height:22}},
+              dist.map((count,i)=>React.createElement("div",{key:i,style:{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:2}},
+                React.createElement("div",{style:{width:"100%",height:Math.max(3,(count/mx)*20),borderRadius:2,background:i<=1?"#fecaca":i===2?"#fde68a":"#c8c8c8"}}),
+                React.createElement("span",{style:{fontSize:9,color:"#bbb"}},count)))));})),
+      // Feature Requests
+      React.createElement("div",{style:{background:"#fff",borderRadius:18,padding:28,boxShadow:"0 2px 8px rgba(0,0,0,0.03)"}},
+        React.createElement("h2",{style:{margin:"0 0 6px",fontSize:16,fontWeight:700,color:"#1a1a1a"}},"기능 개선 요청 및 첨부 이미지"),
+        React.createElement("p",{style:{margin:"0 0 20px",fontSize:12,color:"#999"}},"이미지 클릭 시 확대"),
+        visFQ.map(q=>{const entries=filtered.filter(r=>r[q.id]||r[q.id+"_images"]?.length);if(!entries.length) return null;
+          return React.createElement("div",{key:q.id,style:{marginBottom:24}},
+            React.createElement("div",{style:{fontSize:12,fontWeight:700,color:"#1a1a1a",marginBottom:12,display:"flex",alignItems:"center",gap:6}},
+              React.createElement("span",{style:{background:"#f4f4f4",padding:"2px 8px",borderRadius:5}},q.service),
+              React.createElement("span",{style:{color:"#999",fontWeight:500}},entries.length+"건")),
+            entries.map((r,ri)=>React.createElement("div",{key:ri,style:{padding:14,background:"#fafafa",borderRadius:10,marginBottom:8,border:"1px solid #f1f1f1"}},
+              React.createElement("div",{style:{fontSize:11,color:"#2563eb",fontWeight:600,marginBottom:6}},r._company),
+              r[q.id]&&React.createElement("p",{style:{margin:"0 0 8px",fontSize:13,color:"#333",lineHeight:1.7,whiteSpace:"pre-wrap"}},r[q.id]),
+              r[q.id+"_images"]?.length>0&&React.createElement("div",{style:{display:"flex",gap:6,flexWrap:"wrap"}},
+                r[q.id+"_images"].map((img,ii)=>React.createElement("img",{key:ii,src:img,onClick:()=>setExpandedImg(img),style:{width:120,height:90,objectFit:"cover",borderRadius:6,border:"1px solid #e2e8f0",cursor:"zoom-in"}}))),
+              React.createElement("div",{style:{fontSize:10,color:"#bbb",marginTop:6}},new Date(r.submittedAt).toLocaleString("ko-KR")))));}))
+    )
+  );
+}
+
+// ─── MAIN APP ───
+function App() {
+  const [step,setStep] = React.useState("company");
+  const [company,setCompany] = React.useState("");
+  const [selectedServices,setSelectedServices] = React.useState([]);
+  const [answers,setAnswers] = React.useState({});
+  const [currentTab,setCurrentTab] = React.useState(0);
+  const [animating,setAnimating] = React.useState(false);
+  const [direction,setDirection] = React.useState("next");
+  const [view,setView] = React.useState("main");
+  const [responses,setResponses] = React.useState([]);
+  const [pinInput,setPinInput] = React.useState("");
+  const [pinError,setPinError] = React.useState(false);
+
+  const loadResponses = async()=>{setResponses(await storage.get())};
+  React.useEffect(()=>{loadResponses()},[]);
+
+  const tabs = [...selectedServices.map(sid=>SERVICES.find(s=>s.id===sid)),{id:"overall",name:"종합 의견",icon:"📊"}];
+  const currentTabData = tabs[currentTab];
+  const currentQuestions = currentTabData?.id==="overall"?OVERALL_QUESTIONS:(SERVICE_QUESTIONS[currentTabData?.id]||[]);
+  const allQuestions = []; selectedServices.forEach(sid=>{if(SERVICE_QUESTIONS[sid]) allQuestions.push(...SERVICE_QUESTIONS[sid]);}); allQuestions.push(...OVERALL_QUESTIONS);
+  const totalRating = allQuestions.filter(q=>q.type==="rating").length;
+  const answeredRating = allQuestions.filter(q=>q.type==="rating"&&answers[q.id]>0).length;
+  const canProceed = currentQuestions.filter(q=>q.type==="rating").every(q=>answers[q.id]>0);
+  const setAnswer = (id,val) => setAnswers(prev=>({...prev,[id]:val}));
+  const navigate = dir => {setDirection(dir);setAnimating(true);setTimeout(()=>{setCurrentTab(t=>dir==="next"?t+1:t-1);setAnimating(false)},200)};
+  const toggleService = sid => setSelectedServices(prev=>prev.includes(sid)?prev.filter(s=>s!==sid):[...prev,sid]);
+
+  const handleSubmit = async()=>{
+    const entry={...answers,_company:company,_services:selectedServices,submittedAt:new Date().toISOString()};
+    await storage.post(entry);
+    setStep("submitted");
+  };
+  const handlePinSubmit = ()=>{if(pinInput===ADMIN_PIN){loadResponses();setView("results");setPinError(false);}else setPinError(true)};
+
+  // PIN
+  if(view==="pin") return React.createElement("div",{style:{minHeight:"100vh",background:"#f5f5f3",display:"flex",alignItems:"center",justifyContent:"center",padding:"40px 16px"}},
+    React.createElement("div",{style:{background:"#fff",borderRadius:24,padding:"48px 40px",maxWidth:400,width:"100%",boxShadow:"0 8px 32px rgba(0,0,0,0.06)",textAlign:"center"}},
+      React.createElement("div",{style:{marginBottom:24}},React.createElement(Logo,{width:100})),
+      React.createElement("h2",{style:{margin:"0 0 8px",fontSize:20,fontWeight:700,color:"#1a1a1a"}},"관리자 인증"),
+      React.createElement("p",{style:{margin:"0 0 24px",fontSize:14,color:"#999"}},"결과 조회를 위해 PIN을 입력하세요"),
+      React.createElement("input",{type:"password",maxLength:4,value:pinInput,onChange:e=>{setPinInput(e.target.value.replace(/\D/g,""));setPinError(false)},onKeyDown:e=>e.key==="Enter"&&handlePinSubmit(),placeholder:"4자리 PIN",
+        style:{width:"100%",padding:14,border:`1.5px solid ${pinError?"#ef4444":"#e2e8f0"}`,borderRadius:12,fontSize:18,fontFamily:"inherit",textAlign:"center",letterSpacing:8,background:"#fafafa",boxSizing:"border-box"}}),
+      pinError&&React.createElement("p",{style:{margin:"8px 0 0",fontSize:13,color:"#ef4444"}},"PIN이 올바르지 않습니다"),
+      React.createElement("div",{style:{display:"flex",gap:10,marginTop:20}},
+        React.createElement("button",{type:"button",onClick:()=>{setView("main");setPinInput("");setPinError(false)},style:{flex:1,padding:14,borderRadius:12,border:"1.5px solid #e2e8f0",background:"#fff",color:"#475569",fontWeight:600,fontSize:14,cursor:"pointer",fontFamily:"inherit"}},"취소"),
+        React.createElement("button",{type:"button",onClick:handlePinSubmit,style:{flex:1,padding:14,borderRadius:12,border:"none",background:"#1a1a1a",color:"#fff",fontWeight:700,fontSize:14,cursor:"pointer",fontFamily:"inherit"}},"확인"))));
+
+  if(view==="results") return React.createElement(ResultsDashboard,{responses,onBack:()=>setView("main")});
+
+  // Submitted
+  if(step==="submitted") return React.createElement("div",{style:{minHeight:"100vh",background:"#f5f5f3",display:"flex",alignItems:"center",justifyContent:"center"}},
+    React.createElement("div",{style:{textAlign:"center",background:"#fff",borderRadius:24,padding:"60px 48px",maxWidth:480,boxShadow:"0 8px 32px rgba(0,0,0,0.06)"}},
+      React.createElement("div",{style:{width:72,height:72,borderRadius:"50%",background:"#1a1a1a",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 24px",animation:"popIn 0.5s ease"}},
+        React.createElement("svg",{width:36,height:36,viewBox:"0 0 24 24",fill:"none"},React.createElement("path",{d:"M5 13l4 4L19 7",stroke:"#fff",strokeWidth:2.5,strokeLinecap:"round",strokeLinejoin:"round"}))),
+      React.createElement("h2",{style:{fontSize:24,fontWeight:700,color:"#1a1a1a",margin:"0 0 12px"}},"설문이 제출되었습니다"),
+      React.createElement("p",{style:{fontSize:15,color:"#999",lineHeight:1.7}},"소중한 의견 감사합니다.",React.createElement("br"),"보내주신 내용은 서비스 개선에 적극 반영하겠습니다.")));
+
+  // Main Survey
+  return React.createElement("div",{style:{minHeight:"100vh",background:"#f5f5f3",padding:"40px 16px 80px"}},
+    React.createElement("div",{style:{maxWidth:640,margin:"0 auto"}},
+      // Header
+      React.createElement("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:28}},
+        React.createElement(Logo,{width:120}),
+        React.createElement("button",{type:"button",onClick:()=>setView("pin"),style:{padding:"8px 14px",borderRadius:8,border:"1px solid #e2e8f0",background:"#fff",color:"#999",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}},"📊 결과")),
+      React.createElement("div",{style:{textAlign:"center",marginBottom:32}},
+        React.createElement("h1",{style:{fontSize:26,fontWeight:800,color:"#1a1a1a",margin:"0 0 8px",letterSpacing:-0.5}},"서비스 이용 만족도 설문조사"),
+        React.createElement("p",{style:{fontSize:14,color:"#999",margin:0}},"이용하시는 서비스에 대한 솔직한 의견을 들려주세요")),
+
+      // Company Step
+      step==="company"&&React.createElement("div",{style:{background:"#fff",borderRadius:20,padding:"40px 36px",boxShadow:"0 8px 32px rgba(0,0,0,0.04)",animation:"fadeUp 0.3s ease"}},
+        React.createElement("div",{style:{textAlign:"center",marginBottom:28}},
+          React.createElement("div",{style:{fontSize:36,marginBottom:12}},"🏢"),
+          React.createElement("h2",{style:{margin:"0 0 6px",fontSize:18,fontWeight:700,color:"#1a1a1a"}},"회사명을 입력해 주세요"),
+          React.createElement("p",{style:{margin:0,fontSize:13,color:"#999"}},"소속 회사명을 정확히 입력해 주세요")),
+        React.createElement("input",{value:company,onChange:e=>setCompany(e.target.value),onKeyDown:e=>e.key==="Enter"&&company.trim()&&setStep("services"),placeholder:"예: 워크드, 삼성전자, 카카오",
+          style:{width:"100%",padding:"16px 18px",border:"1.5px solid #e2e8f0",borderRadius:12,fontSize:16,fontFamily:"inherit",background:"#fafafa",boxSizing:"border-box",textAlign:"center"}}),
+        React.createElement("button",{type:"button",onClick:()=>company.trim()&&setStep("services"),disabled:!company.trim(),
+          style:{width:"100%",marginTop:20,padding:16,borderRadius:12,border:"none",background:company.trim()?"#1a1a1a":"#e2e8f0",color:company.trim()?"#fff":"#999",fontWeight:700,fontSize:15,fontFamily:"inherit",cursor:company.trim()?"pointer":"not-allowed"}},"다음 →")),
+
+      // Services Step
+      step==="services"&&React.createElement("div",{style:{background:"#fff",borderRadius:20,padding:"40px 36px",boxShadow:"0 8px 32px rgba(0,0,0,0.04)",animation:"fadeUp 0.3s ease"}},
+        React.createElement("div",{style:{textAlign:"center",marginBottom:24}},
+          React.createElement("h2",{style:{margin:"0 0 6px",fontSize:18,fontWeight:700,color:"#1a1a1a"}},company+"에서 이용 중인 서비스를 선택해 주세요"),
+          React.createElement("p",{style:{margin:0,fontSize:13,color:"#999"}},"해당하는 서비스를 모두 선택하세요")),
+        React.createElement("div",{style:{display:"flex",flexDirection:"column",gap:10}},
+          SERVICES.map(svc=>{const sel=selectedServices.includes(svc.id);return React.createElement("button",{key:svc.id,type:"button",onClick:()=>toggleService(svc.id),
+            style:{display:"flex",alignItems:"center",gap:14,padding:"16px 18px",borderRadius:12,border:`2px solid ${sel?"#1a1a1a":"#e8e8e8"}`,background:sel?"#fafafa":"#fff",cursor:"pointer",textAlign:"left",transition:"all 0.15s",fontFamily:"inherit"}},
+            React.createElement("span",{style:{fontSize:24,width:36,textAlign:"center"}},svc.icon),
+            React.createElement("div",{style:{flex:1}},
+              React.createElement("div",{style:{fontSize:15,fontWeight:700,color:"#1a1a1a"}},svc.name),
+              React.createElement("div",{style:{fontSize:12,color:"#999",marginTop:2}},svc.desc)),
+            React.createElement("div",{style:{width:22,height:22,borderRadius:6,border:`2px solid ${sel?"#1a1a1a":"#d1d5db"}`,background:sel?"#1a1a1a":"#fff",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}},
+              sel&&React.createElement("svg",{width:14,height:14,viewBox:"0 0 24 24",fill:"none"},React.createElement("path",{d:"M5 13l4 4L19 7",stroke:"#fff",strokeWidth:3,strokeLinecap:"round",strokeLinejoin:"round"}))))})),
+        React.createElement("div",{style:{display:"flex",gap:10,marginTop:24}},
+          React.createElement("button",{type:"button",onClick:()=>setStep("company"),style:{flex:1,padding:16,borderRadius:12,border:"1.5px solid #e2e8f0",background:"#fff",color:"#666",fontWeight:600,fontSize:14,cursor:"pointer",fontFamily:"inherit"}},"← 이전"),
+          React.createElement("button",{type:"button",onClick:()=>{if(selectedServices.length){setCurrentTab(0);setStep("survey")}},disabled:!selectedServices.length,
+            style:{flex:2,padding:16,borderRadius:12,border:"none",background:selectedServices.length?"#1a1a1a":"#e2e8f0",color:selectedServices.length?"#fff":"#999",fontWeight:700,fontSize:15,fontFamily:"inherit",cursor:selectedServices.length?"pointer":"not-allowed"}},`설문 시작 (${selectedServices.length}개 선택) →`))),
+
+      // Survey Step
+      step==="survey"&&React.createElement("div",{style:{background:"#fff",borderRadius:20,boxShadow:"0 8px 32px rgba(0,0,0,0.04)",overflow:"hidden"}},
+        React.createElement("div",{style:{padding:"14px 36px 0",display:"flex",alignItems:"center",gap:8}},
+          React.createElement("span",{style:{fontSize:12,color:"#999"}},"응답 기업"),
+          React.createElement("span",{style:{background:"#f4f4f4",padding:"4px 12px",borderRadius:8,fontSize:13,fontWeight:700,color:"#1a1a1a"}},company)),
+        React.createElement("div",{style:{display:"flex",borderBottom:"1px solid #e8e8e8",overflowX:"auto",scrollbarWidth:"none",padding:"12px 36px 0"}},
+          tabs.map((tab,i)=>React.createElement("button",{key:tab.id,type:"button",
+            onClick:()=>{if(i<=currentTab){setDirection(i<currentTab?"prev":"next");setAnimating(true);setTimeout(()=>{setCurrentTab(i);setAnimating(false)},200)}},
+            style:{padding:"10px 16px",border:"none",background:"none",cursor:i<=currentTab?"pointer":"default",borderBottom:i===currentTab?"2px solid #1a1a1a":"2px solid transparent",color:i===currentTab?"#1a1a1a":i<currentTab?"#999":"#d1d5db",fontWeight:i===currentTab?700:500,fontSize:13,fontFamily:"inherit",whiteSpace:"nowrap",display:"flex",alignItems:"center",gap:5,transition:"all 0.2s"}},
+            React.createElement("span",{style:{fontSize:14}},tab.icon)," ",tab.name))),
+        React.createElement("div",{style:{padding:"28px 36px 36px"}},
+          React.createElement(ProgressBar,{current:answeredRating,total:totalRating}),
+          React.createElement("div",{style:{opacity:animating?0:1,transform:animating?`translateX(${direction==="next"?24:-24}px)`:"translateX(0)",transition:"all 0.2s ease"}},
+            currentQuestions.map(q=>React.createElement(QuestionBlock,{key:q.id,q,answers,setAnswer}))),
+          React.createElement("div",{style:{display:"flex",justifyContent:"space-between",marginTop:16,gap:12}},
+            React.createElement("button",{type:"button",onClick:()=>currentTab>0?navigate("prev"):setStep("services"),
+              style:{padding:"14px 28px",borderRadius:12,border:"1.5px solid #e2e8f0",background:"#fff",color:"#666",fontWeight:600,fontSize:14,fontFamily:"inherit",cursor:"pointer"}},"← 이전"),
+            currentTab<tabs.length-1?
+              React.createElement("button",{type:"button",onClick:()=>canProceed&&navigate("next"),disabled:!canProceed,
+                style:{padding:"14px 32px",borderRadius:12,border:"none",background:canProceed?"#1a1a1a":"#e2e8f0",color:canProceed?"#fff":"#999",fontWeight:700,fontSize:14,fontFamily:"inherit",cursor:canProceed?"pointer":"not-allowed"}},"다음 →"):
+              React.createElement("button",{type:"button",onClick:()=>canProceed&&handleSubmit(),disabled:!canProceed,
+                style:{padding:"14px 36px",borderRadius:12,border:"none",background:canProceed?"#1a1a1a":"#e2e8f0",color:canProceed?"#fff":"#999",fontWeight:700,fontSize:15,fontFamily:"inherit",cursor:canProceed?"pointer":"not-allowed"}},"제출하기")))),
+
+      React.createElement("p",{style:{textAlign:"center",fontSize:11,color:"#bbb",marginTop:28}},"본 설문은 서비스 개선 목적으로만 활용되며, 응답 내용은 익명으로 처리됩니다.")
+    )
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+</script>
+</body>
+</html>
